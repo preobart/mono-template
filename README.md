@@ -24,7 +24,6 @@ For continuous integration, a [Github Action](https://github.com/features/action
 -   `celery` for background worker tasks
 -   `django` for building backend logic using Python
 -   `djangorestframework` for building a REST API on top of Django
--   `django-upgrade` for automatically upgrading Django code to the target version on pre-commit
 -   `django-csp` for setting the draft security HTTP header Content-Security-Policy
 -   `django-permissions-policy` for setting the draft security HTTP header Permissions-Policy
 -   `django-celery-results` for storing Celery task results in the Django database
@@ -65,6 +64,8 @@ After completing ALL of the above, clear the README. Then follow `Running` below
     `make logs <service name>` (either `app`, `db`, etc)
 -   To stop the project, run:
     `make down`
+-   Run the tests:
+    `make test someapp.tests.test_views`
 
 #### Adding new dependencies
 
@@ -74,14 +75,12 @@ After completing ALL of the above, clear the README. Then follow `Running` below
 -   After updating the desired file(s), run `make update_dependencies` to update the containers with the new dependencies
     > The above command will stop and re-build the containers in order to make the new dependencies effective
 
-### Testing
-
-`make test`
-
-Will run django tests using `--keepdb` and `--parallel`. You may pass a path to the desired test module in the make command. E.g.:
-
-`make test someapp.tests.test_views`
-
 ### Pre-commit hooks
 
 -   On project root, run `pre-commit install` to enable the hook into your git repo. The hook will run automatically for each commit.
+
+### Github Actions
+
+-   To enable **GitHub Actions**, you need to make sure the folder is named `.github` instead of `github`.  
+    ```bash
+    mv github .github

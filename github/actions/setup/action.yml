@@ -14,7 +14,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: ~/.cache/uv
-        key: uv-${{{{ hashFiles('./backend/pyproject.toml', './backend/uv.lock') }}}}
+        key: uv-${{ hashFiles('./backend/pyproject.toml', './backend/uv.lock') }}
 
     - name: Install uv
       uses: astral-sh/setup-uv@v6

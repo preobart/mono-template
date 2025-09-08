@@ -74,39 +74,6 @@ After completing ALL of the above, clear the README. Then follow `Running` below
 -   After updating the desired file(s), run `make update_dependencies` to update the containers with the new dependencies
     > The above command will stop and re-build the containers in order to make the new dependencies effective
 
-
-### If you are not using Docker:
-
-#### Setup the backend app
-
--   Open the `.env` file on a text editor and do one of the following:
-    -   If you wish to use PostgreSQL locally, fill in the following parameters in the .env file: POSTGRES_USER, POSTGRES_PASSWORD, and POSTGRES_DB.
--   Open a new command line window and go to the project's directory
--   Install uv with `pip install uv`, to have the `uv` command available
--   Run `uv venv`, , activate the virtual environment, then run `uv sync`, 
-
-#### Setup Celery
-
--   `uv run celery --app={{project_name}} worker --loglevel=info`
-
-
-#### Setup Redis
-
--   Ensure that Redis is already installed on your system. Once confirmed, run `redis-server --port 6379` to start the Redis server.
--   If you wish to use Redis for Celery, you need to set the `CELERY_BROKER_URL` environment variable in the `.env` file to `redis://localhost:6379/0`.
-    -   The `/0` at the end of the URL specifies the database number on the Redis server. Redis uses a zero-based numbering system for databases, so `0` is the first database. If you don't specify a database number, Redis will use the first database by default.
-    -   Note: Prefer RabbitMQ over Redis for Broker, mainly because RabbitMQ doesn't need visibility timeout. See [Recommended Celery Django settings for reliability](https://gist.github.com/fjsj/da41321ac96cf28a96235cb20e7236f6).
-
-#### Run the backend app
-
--   Go to the project directory
--   Create the migrations for app:
-    `python manage.py makemigrations`
--   Run the migrations:
-    `python manage.py migrate`
--   Run the project:
-    `python manage.py runserver`
-
 ### Testing
 
 `make test`
@@ -115,15 +82,6 @@ Will run django tests using `--keepdb` and `--parallel`. You may pass a path to 
 
 `make test someapp.tests.test_views`
 
-### Adding new pypi libs
-
-To add a new dependency, run `uv add {dependency}`.
-
-## Linting
-
--   At pre-commit time
--   Manually with `uv run ruff` on project root.
-
-## Pre-commit hooks
+### Pre-commit hooks
 
 -   On project root, run `pre-commit install` to enable the hook into your git repo. The hook will run automatically for each commit.

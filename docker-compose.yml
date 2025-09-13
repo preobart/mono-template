@@ -11,7 +11,7 @@ services:
     volumes:
       - dbdata:/var/lib/postgresql/data
     networks:
-      - backend
+      - {{ project_name }}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -22,7 +22,7 @@ services:
     image: "rabbitmq:alpine"
     restart: always
     networks:
-      - backend
+      - {{ project_name }}
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "check_running"]
       interval: 5s
@@ -33,7 +33,7 @@ services:
     image: "redis:alpine"
     restart: always
     networks:
-      - backend
+      - {{ project_name }}
 
   app:
     image: {{ env.IMAGE }}
@@ -73,7 +73,7 @@ services:
       REDIS_URL: "redis://result:6379/0"
       PORT: 8081
     networks:
-      - backend
+      - {{ project_name }}
 
   celery:
     image: {{ env.IMAGE }}
@@ -96,7 +96,7 @@ services:
       CELERY_BROKER_URL: "amqp://broker:5672//"
       REDIS_URL: "redis://result:6379/0"
     networks:
-      - backend
+      - {{ project_name }}
 
   celery_beat:
     image: {{ env.IMAGE }}
@@ -121,12 +121,12 @@ services:
       CELERY_BROKER_URL: "amqp://broker:5672//"
       REDIS_URL: "redis://result:6379/0"
     networks:
-      - backend
+      - {{ project_name }}
 
 volumes:
   dbdata:
     name: {{project_name}}_dbdata
 
 networks:
-  backend:
+  {{ project_name }}:
     driver: bridge

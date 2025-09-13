@@ -43,20 +43,14 @@ services:
       dockerfile: Dockerfile
       context: .
     restart: always
-    command: >
-      sh -c "
-        python manage.py makemigrations --dry-run --check &&
-        python manage.py migrate --no-input &&
-        gunicorn {{ project_name }}.wsgi:application \
-          --bind 0.0.0.0:8081 \
-          --access-logfile - \
-          --error-logfile - \
-          --capture-output \
-          --log-level info \
-          --workers 2 \
-          --timeout 120 \
-          --reload
-      "
+     command: >
+      sh -c "python manage.py makemigrations --dry-run --check &&
+            python manage.py migrate --no-input &&
+            python manage.py runserver_plus --cert-file cert.pem 0.0.0.0:8081
+            # python manage.py collectstatic --noinput &&
+            # gunicorn {{project_name}}.wsgi:application --bind 0.0.0.0:8081
+            # --access-logfile - --error-logfile - --capture-output
+            # --log-level info --workers 2 --timeout 120 --reload"
     container_name: app
     ports:
       - "8081:8081"

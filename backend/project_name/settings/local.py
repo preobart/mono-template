@@ -3,15 +3,13 @@ from .base import *
 
 DEBUG = True
 
-HOST = "http://localhost:8000"
+ALLOWED_HOSTS = ["*"]
 
 SECRET_KEY = "secret"  # noqa: S105
 
-STATIC_ROOT = base_dir_join("staticfiles")
 STATIC_URL = "/static/"
+STATIC_ROOT = base_dir_join("staticfiles")
 
-MEDIA_ROOT = base_dir_join("mediafiles")
-MEDIA_URL = "/media/"
 
 STORAGES = {
     "default": {
@@ -22,9 +20,19 @@ STORAGES = {
     },
 }
 
-AUTH_PASSWORD_VALIDATORS = []  # allow easy passwords only on local
+AUTH_PASSWORD_VALIDATORS = []
 
 # Celery
 CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="")
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000", 
+    "http://127.0.0.1:3000",
+]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_SSL_REDIRECT = False

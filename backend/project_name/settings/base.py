@@ -37,7 +37,7 @@ DEBUG = True
 
 SITE_ID = 1
 
-ALLOWED_HOSTS = env("ALLOWED_HOSTS", "*").split(",")
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'corsheaders',
     'rest_framework',
     'django_celery_beat',
     'defender',
@@ -132,9 +134,16 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework.authentication.SessionAuthentication",),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '60/min',
+        'user': '100/min'
+    }
 }
 
 # Internationalization
@@ -177,6 +186,16 @@ PERMISSIONS_POLICY = {
     "xr-spatial-tracking": [],
 }
 
+# Defender settings
+DEFENDER_REDIS_URL = os.getenv("DEFENDER_REDIS_URL")
+DEFENDER_COOLOFF_TIME = 60
+
+# Number of failed login attempts before a user is locked out.
+# django-defender checks the lock *after* recording a failed attempt,
+# so the actual lock happens 1 attempt later than this number.
+DEFENDER_LOGIN_FAILURE_LIMIT = 3
+DEFENDER_STORE_ACCESS_ATTEMPTS = False
+
 # Celery
 # Recommended settings for reliability: https://gist.github.com/fjsj/da41321ac96cf28a96235cb20e7236f6
 CELERY_ACCEPT_CONTENT = ["json"]
@@ -204,8 +223,40 @@ CELERY_WORKER_SEND_TASK_EVENTS = env("CELERY_WORKER_SEND_TASK_EVENTS", "true")
 CELERY_EVENT_QUEUE_EXPIRES = float(env("CELERY_EVENT_QUEUE_EXPIRES", 60.0))
 CELERY_EVENT_QUEUE_TTL = float(env("CELERY_EVENT_QUEUE_TTL", 5.0))
 
-# Django-defender
-DEFENDER_LOGIN_FAILURE_LIMIT = 5
-DEFENDER_COOLOFF_TIME = 300  # 5 minutes
-DEFENDER_LOCKOUT_TEMPLATE = "defender/lockout.html"
-DEFENDER_REDIS_URL = env("REDIS_URL")
+# SSO via Cookies
+BASE_DOMAIN = env("BASE_DOMAIN")
+
+# Lax allows the cookie to be sent on safe cross-site requests
+SESSION_COOKIE_SAMESITE = "Lax" 
+CSRF_COOKIE_SAMESITE = "Lax"
+
+# Define the domain for which the session and CSRF cookies are valid.
+SESSION_COOKIE_DOMAIN = BASE_DOMAIN
+CSRF_COOKIE_DOMAIN = BASE_DOMAIN
+
+# Stores the CSRF token in a cookie (not in sessions) and allows frontend JavaScript to read it for AJAX requests.
+CSRF_USE_SESSIONS = False
+CSRF_COOKIE_NAME = "csrftoken"
+CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
+CSRF_COOKIE_HTTPONLY = False
+
+# Ensures the cookie is sent only over HTTPS.
+# Specifies the domains allowed to submit requests with a valid CSRF token.
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = []
+
+# Specifies which origins are allowed to make cross-origin requests.
+# Allows credentials (cookies, auth headers) to be included in CORS requests.
+CORS_ALLOWED_ORIGINS = []
+CORS_ALLOW_CREDENTIALS = True
+
+# Enables HTTPS with HSTS (including subdomains and preload), redirects HTTP to HTTPS,
+# and sets security headers to prevent MIME sniffing, XSS, and clickjacking.
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_SSL_REDIRECT = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = "DENY"

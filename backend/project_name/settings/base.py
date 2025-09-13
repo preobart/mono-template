@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'django_celery_beat',
-    'defender',
 ]
 
 MIDDLEWARE = [
@@ -186,15 +185,6 @@ PERMISSIONS_POLICY = {
     "xr-spatial-tracking": [],
 }
 
-# Defender settings
-DEFENDER_REDIS_URL = os.getenv("DEFENDER_REDIS_URL")
-DEFENDER_COOLOFF_TIME = 60
-
-# Number of failed login attempts before a user is locked out.
-# django-defender checks the lock *after* recording a failed attempt,
-# so the actual lock happens 1 attempt later than this number.
-DEFENDER_LOGIN_FAILURE_LIMIT = 3
-DEFENDER_STORE_ACCESS_ATTEMPTS = False
 
 # Celery
 # Recommended settings for reliability: https://gist.github.com/fjsj/da41321ac96cf28a96235cb20e7236f6

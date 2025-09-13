@@ -17,7 +17,8 @@ up:
 down:
 	docker compose down
 
-restart: down up
+restart: 
+	docker compose restart $(ARG)
 
 logs:
 	docker compose logs -f $(ARG)

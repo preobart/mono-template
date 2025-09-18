@@ -39,12 +39,12 @@ createsuperuser:
 	docker compose exec $(SERVICE) python manage.py createsuperuser
 
 check:
-	-ruff check .
-	-ruff format --check .
+	-uv ruff check .
+	-uv ruff format --check .
 
 lint:
-	ruff check . --fix
-	ruff format .
+	uv ruff check . --fix
+	uv ruff format .
 
 test:
 	docker compose exec -T $(SERVICE) python manage.py test $(ARG) --parallel --keepdb

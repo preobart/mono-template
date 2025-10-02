@@ -74,6 +74,9 @@ services:
       PORT: 8081
     networks:
       - {{ project_name }}
+    volumes:
+      - .:/app
+      - /app/.venv
 
   celery:
     image: {{ env.IMAGE }}

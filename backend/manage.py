@@ -18,7 +18,7 @@ if __name__ == "__main__":
                 "Ignoring config('DJANGO_SETTINGS_MODULE') because it's test. "
                 "Using '{{project_name}}.settings.test'"
             )
-        os.environ["DJANGO_SETTINGS_MODULE"] = "id.settings.test"
+        os.environ["DJANGO_SETTINGS_MODULE"] = "{{project_name}}.settings.test"
     else:
         if settings_module is None:
             print(
